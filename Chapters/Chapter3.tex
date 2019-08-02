@@ -34,57 +34,37 @@
   morecomment=[s]{/*}{*/}%
 }
 
+En este capítulo se presenta la arquitectura del \textit{firmware} y el patrón de diseño usado para los módulos del sistema. Asimismo, se detallan aspectos funcionales de cada módulo y se fundamentan las elecciones de los distintos componentes de hardware utilizados.
+
+El código fuente asociado puede consultarse en la siguiente URL:
+\url{https://github.com/alesuarez/soniforo}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
-\section{Análisis del software}
- 
-La idea de esta sección es resaltar los problemas encontrados, los criterios utilizados y la justificación de las decisiones que se hayan tomado.
+\section{Arquitectura}
+A este proyecto se le dió el nombre de Soniforo, de la conjunción da las palabras Sonido y semáforo.
 
-Se puede agregar código o pseudocódigo dentro de un entorno lstlisting con el siguiente código:
+Se optó por un modelo de capas jerárquico para organizar el código en los distintos niveles de abstracción.
 
-\begin{verbatim}
-\begin{lstlisting}[caption= "un epígrafe descriptivo"]
+En la figura \ref{fig:arquitecturaFirmwareGeneralSistema} se puede observar como se planteó este trabajo. 
+ \begin{figure}[h]
+	\centering
+	\includegraphics[scale=.6]{./Figures/arquitecturaGeneralSistema.pdf}
+	\caption{Estructura de capas para el \textit{firmware}.}
+	\label{fig:arquitecturaFirmwareGeneralSistema}
+\end{figure}
 
-	las líneas de código irían aquí...
-	
-\end{lstlisting}
-\end{verbatim}
+En cuanto a los niveles de abstraccion, la primera capa consituye el hardware de la plataforma EDU-CIAA. La segunda capa, \textit{Hardware Abstracion Layer} (HAL), permite desacoplar las capas superiores del hardware. Aquí se encuentran los
+drivers del fabricante del microcontrolador, en el bloque funcional LPC Open. La capa Hardware Independent Layer (HIL) incluye los módulos del RTOS (no está asociada a ningún hardware en particular) y sAPI que permite el manejo de los perifericos de la placa con mayor facilidad.
+Sobre esta base se observa una capa orientada a servicio que nos permiten procesar la información del sistema, estas son: 
+\begin{itemize}
+\item Rtos service: Se encarga de la creación de tareas, temporizadores, semaforos binarios.
+\item Peripheral driver: Se encarga de la configuración de los perifericos, como ser las interrupciones.
+\item Envent framework: esta capa se encarga de la definición y creación de todos los eventos del sistema.
+\end{itemize}
 
-A modo de ejemplo:
-
-\begin{lstlisting}[caption=Pseudocódigo del lazo principal de control.]  % Start your code-block
-
-#define MAX_SENSOR_NUMBER 3
-#define MAX_ALARM_NUMBER  6
-#define MAX_ACTUATOR_NUMBER 6
-
-uint32_t sensorValue[MAX_SENSOR_NUMBER];		
-FunctionalState alarmControl[MAX_ALARM_NUMBER];	//ENABLE or DISABLE
-state_t alarmState[MAX_ALARM_NUMBER];						//ON or OFF
-state_t actuatorState[MAX_ACTUATOR_NUMBER];			//ON or OFF
-
-void vControl() {
-
-	initGlobalVariables();
-	
-	period = 500 ms;
-		
-	while(1) {
-
-		ticks = xTaskGetTickCount();
-		
-		updateSensors();
-		
-		updateAlarms();
-		
-		controlActuators();
-		
-		vTaskDelayUntil(&ticks, period);
-	}
-}
-\end{lstlisting}
+Sobre estas capas se ubican todas las tareas que corren y son propias del sistema, a esta se la llama Rtos task. Finalmente, la última capa contiene la aplicación Soniforo.
 
 
 

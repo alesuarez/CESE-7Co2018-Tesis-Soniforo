@@ -1,0 +1,205 @@
+% $ biblatex auxiliary file $
+% $ biblatex version 2.6 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\entry{esp01}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Esp01}{E.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{E1}
+  \strng{fullhash}{E1}
+  \field{sortinit}{E}
+  \field{note}{Disponible: 2019-07-31}
+  \field{title}{Hoja de datos Esp01}
+  \verb{url}
+  \verb http://www.microchip.ua/wireless/esp01.pdf
+  \endverb
+\endentry
+
+\entry{raeWifi}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {española}{e.}%
+     {Real}{R.}%
+     {academia}{a.}%
+     {}{}}%
+  }
+  \strng{namehash}{eRa1}
+  \strng{fullhash}{eRa1}
+  \field{sortinit}{E}
+  \field{note}{Disponible: 2019-07-13}
+  \field{title}{Definicion de wifi}
+  \verb{url}
+  \verb https://dle.rae.es/?id=c6ehZd8
+  \endverb
+\endentry
+
+\entry{espressif}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Espressif}{E.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{E2}
+  \strng{fullhash}{E2}
+  \field{sortinit}{E}
+  \field{note}{Disponible: 2019-07-31}
+  \field{title}{Espressif Systems}
+  \verb{url}
+  \verb https://www.espressif.com/
+  \endverb
+\endentry
+
+\entry{esp8266}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Espressif}{E.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{E2}
+  \strng{fullhash}{E2}
+  \field{sortinit}{E}
+  \field{note}{Disponible: 2019-07-31}
+  \field{title}{Hoja de datos ESP8266}
+  \verb{url}
+  \verb https://www.espressif.com/sites/default/files/documentation/0a-esp8266e
+  \verb x_datasheet_en.pdf
+  \endverb
+\endentry
+
+\entry{estudioIndec}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Indec}{I.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{I1}
+  \strng{fullhash}{I1}
+  \field{sortinit}{I}
+  \field{note}{Disponible: 2019-07-13}
+  \field{title}{Estudio Nacional sobre el Perfil de las Personas con
+  Discapacidad}
+  \verb{url}
+  \verb https://www.indec.gob.ar/ftp/cuadros/poblacion/estudio_discapacidad_12_
+  \verb 18.pdf
+  \endverb
+\endentry
+
+\entry{dsLm386}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Instrument}{I.}%
+     {Texas}{T.}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{IT1}
+  \strng{fullhash}{IT1}
+  \field{sortinit}{I}
+  \field{note}{Disponible: 2019-07-31}
+  \field{title}{Hoja de datos LM386}
+  \verb{url}
+  \verb http://www.ti.com/lit/ds/symlink/lm386.pdf
+  \endverb
+\endentry
+
+\entry{sapi}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {sAPI}{s.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{s1}
+  \strng{fullhash}{s1}
+  \field{sortinit}{S}
+  \field{note}{Disponible: 2019-07-20}
+  \field{title}{simpleAPI}
+  \verb{url}
+  \verb https://github.com/epernia/sAPI
+  \endverb
+\endentry
+
+\entry{semaforo}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Wikipedia}{W.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{W1}
+  \strng{fullhash}{W1}
+  \field{sortinit}{W}
+  \field{note}{Disponible: 2019-07-11}
+  \field{title}{Semáforo}
+  \verb{url}
+  \verb https://es.wikipedia.org/wiki/Sem%C3%A1foro
+  \endverb
+\endentry
+
+\entry{softAp}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Wikipedia}{W.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{W1}
+  \strng{fullhash}{W1}
+  \field{sortinit}{W}
+  \field{note}{Disponible: 2019-07-31}
+  \field{title}{SoftAP}
+  \verb{url}
+  \verb https://es.wikipedia.org/wiki/SoftAP
+  \endverb
+\endentry
+
+\entry{wifiDirect}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Wikipedia}{W.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{W1}
+  \strng{fullhash}{W1}
+  \field{sortinit}{W}
+  \field{note}{Disponible: 2019-07-31}
+  \field{title}{Wi-Fi Direct}
+  \verb{url}
+  \verb https://es.wikipedia.org/wiki/Wi-Fi_Direct
+  \endverb
+\endentry
+
+\lossort
+\endlossort
+
+\endinput

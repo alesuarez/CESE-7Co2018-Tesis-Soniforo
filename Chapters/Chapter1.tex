@@ -25,17 +25,16 @@ Este capítulo introduce al lector al tema abordado en este trabajo, su propósi
 
 \section{Motivacion}
 
-En Argentina 1 de cada 10 personas poseen algún tipo de discapacidad, siendo la que más prevalece la discapacidad motora, seguida por la visual, la auditiva y la mental.
+En Argentina 1 de cada 10 personas poseen algún tipo de discapacidad, siendo la que más prevalece la discapacidad motora, seguida por la visual, la auditiva y la mental \cite{estudioIndec}.
 
-Uno de los problemas más comunes a los que se enfrentan las personas con discapacidad visual es el cálculo de distancias en un lugar dado, el cual es necesario para evitar accidentes. Es por esta razón que se acude al uso de elementos como el bastón. Entre los principales desafíos que encuentran las personas con discapacidad visual es cruzar la calle. Esto se debe a que en general no tienen ningún tipo de señal que les indique si la calle está libre de autos circulando o si se produjo el cambio de semáforo a verde. Para estas situaciones el bastón no es de utilidad, ya que no brinda ningún tipo de información al respecto para advertir si la persona puede o no cruzar la calle sin ningún peligro. Si bien en algunas oportunidades pueden valerse de la buena intención de algún transeúnte es importante para toda persona poder valerse por sí misma y no depender de un tercero. 
-
-
+En este marco nos enfocamos en las personas con discapacidad visual, las cuales se enfrentan diariamente con el desafío de calcular distancias en un lugar determinado, con el fin de evitar accidentes. El uso del bastón es el elemento empleado a la hora de desplazarse para evitar dicha problemática. Bajo este contexto el mayor inconveniente surge en la vía publica al querer cruzar una calle.  Esto se debe a que en general no tienen ningún tipo de señal que les indique si está libre de autos circulando o si se produjo el cambio de semáforo. Para estas situaciones el bastón no es de utilidad, ya que no brinda ningún tipo de información. Si bien en algunas oportunidades pueden valerse de la buena intención de algún transeúnte es importante para toda persona poder valerse por sí misma y no depender de un tercero. 
 
 \section{Objetivos}
 
-Este proyecto consistió en desarrollar un prototipo abierto, autónomo y económico, que permitirá ser conectado a cualquier semáforo convencional, aprendiendo el comportamiento de este, tomando como entradas la secuencia de luces del semáforo y como salida pretende advertir a la persona con discapacidad visual cuando puede o no cruzar la calle sin peligro. Esta advertencia se va a realizar por medio de un pitido generado por un buzzer y/o de su teléfono inteligente.
+El objetivo de este proyecto fue desarrollar un prototipo abierto, autónomo y económico, que permita ser conectado a cualquier semáforo convencional, aprendiendo su comportamiento. Tomando como entradas la secuencia de luces del semáforo y como salida advierta a las personas con discapacidades visuales
+cuando puede o no cruzar la calle sin peligro. Esta advertencia se realiza por medio de de una señal sonora y/o vibraciones de su teléfono inteligente el cual se conecta a una red wifi \citep{raeWifi} provista por el sistema.
 
-Dicho prototipo fue realizado de manera abierta, es decir, que su código y hardware están disponibles para todas las personas que lo  deseen y que tengan la libertad de modificarlo.
+Dicho prototipo fue realizado de manera abierta, es decir, que su código y hardware están disponibles para todas las personas que lo  deseen.
 
 %----------------------------------------------------------------------------------------
 
@@ -48,11 +47,6 @@ El desarrollo del presente proyecto incluyó:
 \item Desarrollo de un protocolo para lograr la escalabilidad en las formas de comunicación con dispositivos de advertencia.
 \item Ajuste de nivel de sonido automáticamente según ruido ambiente.
 \item Posibilidad de activar el sistema por medio de un comando a distancia.
-\end{itemize}
-
-El presente proyecto no incluyó:
-\begin{itemize}
-\item Compatibilidad con otro sistema operativos distintos de android.
 \end{itemize}
 
 %----------------------------------------------------------------------------------------

@@ -43,6 +43,9 @@ headsepline, % Uncomment to get a line under the header
 \usepackage[utf8]{inputenc} % Required for inputting international characters
 \usepackage[T1]{fontenc} % Output font encoding for international characters
 
+\usepackage{enumerate} 
+\usepackage{float}
+
 \usepackage{palatino} % Use the Palatino font by default
 %,style=authoryear
 \usepackage[backend=bibtex,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
@@ -87,12 +90,12 @@ headsepline, % Uncomment to get a line under the header
 %----------------------------------------------------------------------------------------
 
 \thesistitle{Sistema para conversión de semáforos convencionales en semáforos para no videntes} % El títulos de la memoria, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \ttitle
-\supervisor{Esp. Ing. Sergio R. De Jesus Melean} % El nombre del director, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \supname
+\supervisor{Esp. Ing. Sergio Renato de Jesús Meleán} % El nombre del director, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \supname
 \degree{Especialista en Sistemas Embebidos } % Nombre del grado, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \degreename
 \author{Ing. Sebastián Alejandro Suárez} % Tu nombre, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \authorname
-\juradoUNO{Esp. Ing. Franco Bucafusco (pertenencia)} % Nombre y pertenencia del un jurado se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \jur1name
+\juradoUNO{Esp. Ing. Franco Bucafusco (FIUBA)} % Nombre y pertenencia del un jurado se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \jur1name
 \juradoDOS{Esp. Ing. Diego Fernandez (FIUBA)} % Nombre y pertenencia del un jurado se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \jur2name
-\juradoTRES{Ing. Marcelo Romeo (pertenencia)} % Nombre y pertenencia del un jurado se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \jur3name
+\juradoTRES{Esp. Ing. Marcelo E. Romeo (UNSAM, UTN-FRBA)} % Nombre y pertenencia del un jurado se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \jur3name
 \fechaINICIO{octubre 2018}
 \fechaFINAL{agosto de 2019}
 
@@ -179,11 +182,11 @@ Jurados:\\
 %The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots
 \centering
 
-En la presente memoria se describe la realización de un sistema para la inclusión de personas no videntes o con disminucion visual, el cual advierte los cambios de luces a través de una red inalámbrica por medio de las vibraciones de un teléfono inteligente.
+En esta memoria se describe el diseño e implementación de un sistema para la inclusión de personas no videntes o con disminución visual, el cual advierte los cambios de luces de un semáforo vehicular a través de una red inalámbrica por medio de las vibraciones de un teléfono inteligente.
 
-Para el desarrollo del proyecto se aplicaron los conocimientos adquiridos a lo largo de la carrera como ser la programación de microcontroladores, utilización de un sistema operativo de tiempo real y protocolos de comunicación. 
+Para la elaboración del proyecto se aplicaron los conocimientos adquiridos a lo largo de la Carrera de Especialización en Sistemas Embebidos tales como la programación de microcontroladores, conceptos de sistemas operativos de tiempo real, procesamiento de eventos asíncronos, protocolos de comunicación y diseño de circuitos impresos. 
 
-Este trabajo fue articulado para la empresa Adox la cual está interesada en el desarrollo de este equipo, siendo el código y hardware público a la comunidad. 
+Este trabajo fue desarrollado para la empresa Adox la cual está interesada en la creación de este equipo, siendo el código y hardware público a la comunidad. 
 
 \end{abstract}
 
@@ -197,13 +200,13 @@ Este trabajo fue articulado para la empresa Adox la cual está interesada en el 
 
 A mi esposa Mary por su compañía, paciencia, consejo y apoyo incondicional  a lo largo de toda la especializacion.
 
-A mis padres Jose y Graciela que me forjaron como la persona que soy y me alentaron en el estudio.
+A mis padres José y Graciela que me forjaron como la persona que soy y me alentaron en el estudio.
 
-A mi Director Sergio por su tiempo y sabiduria en todo momento.
+A mi director Sergio por su tiempo y sabiduria en todo momento.
 
-A Roberto Zelarayan por prestarme la EduCiaa.
+A Roberto Zelarayán por prestarme la EDU-CIAA.
 
-A los profesores de la carrera de Especialización en Sistemas Embebidos que me acompañaron en esta formación profesional.
+A los profesores de la Carrera de Especialización en Sistemas Embebidos que me acompañaron en esta formación profesional.
 
 \end{acknowledgements}
 
