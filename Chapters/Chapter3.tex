@@ -42,9 +42,9 @@ El código fuente asociado puede consultarse en la siguiente URL:
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
-Sobre estas capas se ubican todas las tareas que corren y son propias del sistema, a esta se la llama RTOS Task. Finalmente, la última capa contiene la aplicación Soniforo.
 
-\section{Arquitectura de hardware}
+\section{Hardware}
+\subsection{Arquitectura}
 Como se menciono en el capitulo anterior el sistema utiliza distintos módulos para poder manejar eventos externos y reaccionar en consecuencia, en la figura \ref{fig:diagramaGeneralHardware} se puede observar los módulos y su tipo de conexión a la placa principal EDU-CIAA.
 
 \begin{figure}[h]
@@ -63,7 +63,8 @@ De esta manera se lista los módulos con su respectiva interfaces utilizada:
 	\item ESP8266: utilizar el otro puerto RS232 que posee la EDU-CIAA.
 \end{itemize}
 
-\section{Arquitectura de firmware}
+\section{Firmware}
+\subsection{Arquitectura}
 A este proyecto se le dió el nombre de Soniforo, de la conjunción da las palabras sonido y semáforo.
 
 Se optó por un modelo de capas jerárquico para organizar el código en los distintos niveles de abstracción.
@@ -85,7 +86,9 @@ Sobre esta base se observa una capa orientada a servicio que procesar la informa
 \item Envent Framework: esta capa se encarga de la definición y creación de todos los eventos del sistema.
 \end{itemize}
 
-\section{Diseño del firmware}
+Sobre estas capas se ubican todas las tareas que corren y son propias del sistema, a esta se la llama RTOS Task. Finalmente, la última capa contiene la aplicación Soniforo.
+
+\subsection{Diseño del firmware}
 Para modelar la solución se utilizo una maquina de estado finito, también conocidas como MEF, esta se puede definir como un modelo computacional que realiza cómputos en forma automática sobre una entrada para producir una salida.
 
 Este modelo está conformado por un alfabeto, un conjunto de estados finito, una función de transición, un estado inicial y un conjunto de estados finales.
@@ -107,7 +110,7 @@ De una manera general el sistema puede encontrarse en 3 estados:
 \item Corriendo: Una  vez finalizados los dos estados anteriores correctamente, el sistema comienza a funcionar de manera autónoma, siempre y cuando no detecte anomalías en los cambios de las luces del semáforo.
 \end{itemize}
 
-\subsection{Configuración}
+\subsubsection{Configuración}
 Al energizarse el sistema o luego de un reinicio, el este inicia en el estado INIT donde comienza un temporizador (initConfigurationTimerHandle) que al momento de expirar envía un mensaje para iniciar el sistema, en este momento el sistema pasa a estado CONFIGUING\_INIT este estado consiste en configurar todos los dispositivos de advertencia conectados a la placa principal. 
 En el caso particular para la ESP8266 dicha configuración se la hace a traves de comandos AT, lo que se quiere lograr con la esto es que el modulo Wi-Fi levante un punto de acceso inalámbrico, de forma tal que, cualquier teléfono inteligente pueda conectarse a la red inalámbrica propiamente dicha. Tambien una vez configurado correctamente el punto de acceso, se abre una conexion UDP en el puerto 4096 de manera tal que se pueda enviar mensajes broadcast por dicho puerto. (todo: mejorar esta parte)
 A continuación se enumeran los comando que debe enviar la EDU-CIAA a traves del puerto RS232 hacia la ESP8266 para poder configurar lo nombrado anteriormente de manera correcta:
@@ -130,7 +133,7 @@ Para mas detalle de que hace cada comando el lector puede recurrir a la hoja con
 
 Cada comando posee una respuesta conocida es por esto que por cada uno enviado se espera la respuesta previamente definida, si esto no sucede después de tres intentos se envía la señal SIG\_FAIL\_CONFIG de manera que el sistema vuelve al estado INIT.
 
-\subsection{Aprendizaje}
+\subsubsection{Aprendizaje}
 Lo que busca el sistema es tiempo que el peatón pueda cruzar la calle y  que tiempo no debe cruzar la calle, esto es los tiempos de las luces tanto roja como verde respectivamente, cuando la luz verde del semaforo vehicular se prende signica que el peaton no puede cruzar la calle ya que se encuentran los vehículos en marcha pero cuando la luz cambia a rojo los vehiculos estan detenidos y el peatón puede cruzar la calle.
 
 Como no sabemos a priori en que momento del ciclo el sistema se va a poner en funcionamiento, ni tampoco conocemos que tiempo puede tardar la configuración de los dispositivos de advertencias, el proceso de aprendizaje se hace a traves del encendido u apagado de las luces roja y verde.
@@ -151,7 +154,7 @@ Tomando como base que el sistema termino de configurarse correctamente cuando el
 
 Si por alguna razon se detecta alguna anomalia, como ser un semaforo fuera de servicio el sistema regresa al estado LEARNING INIT. Esto se logra atravez de un temporizador que debe actualizarce cada 65 segundos, si esto no acurre se ejecuta la accion definida anteriormente.
 
-\subsection{Corriendo}
+\subsubsection{Corriendo}
 Una vez finalizado correctamente el aprendizaje de los tiempos, el sistema calcula el tiempo limite para indicar a la persona que puede cruzar la calle tranquilamente, esto se hace a traves de la sigueinte formula \ref{eq:calculoTiempoAmarillo}
 
 \begin{equation}
@@ -173,6 +176,41 @@ El sistema posee tres temporizadores los cuales son iniciados cuando se detecta 
 
 \begin{itemize}
 \item redLightTimerHandle: tiempo de la luz roja encendida.
-\item yellowLightTimerHandle: se mide en base a la luz roja como se mensiono anteriormente.
+\item yellowLightTimerHandle: se mide en base a la luz roja como se menciono anteriormente.
 \item greenLightTimerHandle: tiempo de la luz verde.
 \end{itemize}
+
+Una vez configurados los temporizadores, se espera una interrupción de la luz roja para desbloquear la tarea de enviar el estado CROSS a la ESP8266 y ademas empieza a correr el temporizador de la luz roja, cuando este expira se bloquea la tarea de enviar el estado de CROSS y se desbloquea la tarea de enviar el estado CAUTION y se incializa el temporizador de la luz amarilla, cabe recordar como se mensiono que los mensajes broadcast UDP  a traves del puerto 4096. Una vez que vence este temporizador se bloque la tarea de enviar el estado CROSS y se espera nuevamente por la señal de la luz roja encendida.
+
+\section{Principio de funcionamiento}
+El firmware fue diseñado en base a distintos patrones vistos a lo largo de la carrera, principalmente el sistema se basa en el diseño Observar y reaccionar, este patron nos permite reaccionar a distintos eventos y reaccionar de una manera predefinida en conjunto con este patron el sistema implementa Lazos de eventos. Donde las reacciones produce mensajes y segun el estado en el cual este el sistema dispara alguna accion. Donde en nuestro caso particular estas reacciones generan transiciones de estados.
+En la figura \ref{fig:generalWorkFlow} se puede observar el flujo de trabajo del sistema, donde los eventos que produce el semaforo se envian a una cola que segun el tipo de evento y el estado del sistema reacciona de una manera definida.
+Es por eso que se define un tipo de dato especial para enviar el evento hacia una cola.
+
+\lstset{language=C, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}
+typedef struct  {
+	led_name_t Led;
+	led_status_t Status;
+} message_t;
+\end{lstlisting}
+
+Los tipos de estados de las luces pueden ser:
+
+\begin{itemize}
+\item Luz encendida
+\item Luz Apagada
+\end{itemize}
+
+El flujo por ejemplo si se prendiera la luz roja seria:
+\begin{enumerate}
+\item
+\item
+\item
+\end{enumerate}
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=.6]{./Figures/generalWorkFlow.pdf}
+	\caption{Diagrama general de funcionamiento.}
+	\label{fig:generalWorkFlow}
+\end{figure}

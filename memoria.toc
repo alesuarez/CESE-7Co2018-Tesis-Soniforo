@@ -20,10 +20,13 @@
 \contentsline {subsubsection}{Modulo wifi}{7}{section*.46}
 \contentsline {subsubsection}{Modulo generador de sonido}{7}{section*.48}
 \contentsline {chapter}{\numberline {3}Dise\IeC {\~n}o e Implementaci\IeC {\'o}n}{9}{chapter.50}
-\contentsline {section}{\numberline {3.1}Arquitectura de firmware}{9}{section.51}
-\contentsline {section}{\numberline {3.2}Arquitectura de hardware}{10}{section.53}
-\contentsline {section}{\numberline {3.3}Dise\IeC {\~n}o del firmware}{11}{section.55}
-\contentsline {subsection}{\numberline {3.3.1}Configuraci\IeC {\'o}n}{12}{subsection.57}
-\contentsline {subsection}{\numberline {3.3.2}Aprendizaje}{12}{subsection.69}
-\contentsline {subsection}{\numberline {3.3.3}Corriendo}{13}{subsection.71}
-\contentsline {chapter}{Bibliograf\'{\i }a}{15}{appendix*.74}
+\contentsline {section}{\numberline {3.1}Hardware}{9}{section.51}
+\contentsline {subsection}{\numberline {3.1.1}Arquitectura}{9}{subsection.52}
+\contentsline {section}{\numberline {3.2}Firmware}{10}{section.54}
+\contentsline {subsection}{\numberline {3.2.1}Arquitectura}{10}{subsection.55}
+\contentsline {subsection}{\numberline {3.2.2}Dise\IeC {\~n}o del firmware}{11}{subsection.57}
+\contentsline {subsubsection}{Configuraci\IeC {\'o}n}{12}{section*.59}
+\contentsline {subsubsection}{Aprendizaje}{13}{section*.71}
+\contentsline {subsubsection}{Corriendo}{14}{section*.73}
+\contentsline {section}{\numberline {3.3}Principio de funcionamiento}{14}{section.76}
+\contentsline {chapter}{Bibliograf\'{\i }a}{17}{appendix*.86}
