@@ -70,6 +70,25 @@
   \endverb
 \endentry
 
+\entry{esp8266command}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Espressif}{E.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{E2}
+  \strng{fullhash}{E2}
+  \field{sortinit}{E}
+  \field{note}{Disponible: 2019-08-07}
+  \field{title}{Hoja de comandos ESP8266}
+  \verb{url}
+  \verb https://www.espressif.com/sites/default/files/documentation/4a-esp8266_
+  \verb at_instruction_set_en.pdf
+  \endverb
+\endentry
+
 \entry{esp8266}{misc}{}
   \name{author}{1}{}{%
     {{}%

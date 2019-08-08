@@ -42,29 +42,137 @@ El código fuente asociado puede consultarse en la siguiente URL:
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
-\section{Arquitectura}
-A este proyecto se le dió el nombre de Soniforo, de la conjunción da las palabras Sonido y semáforo.
+Sobre estas capas se ubican todas las tareas que corren y son propias del sistema, a esta se la llama RTOS Task. Finalmente, la última capa contiene la aplicación Soniforo.
+
+\section{Arquitectura de hardware}
+Como se menciono en el capitulo anterior el sistema utiliza distintos módulos para poder manejar eventos externos y reaccionar en consecuencia, en la figura \ref{fig:diagramaGeneralHardware} se puede observar los módulos y su tipo de conexión a la placa principal EDU-CIAA.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=.7]{./Figures/diagramaGeneralHardware.pdf}
+	\caption{Diagrama general del hardware.}
+	\label{fig:diagramaGeneralHardware}
+\end{figure}
+
+De esta manera se lista los módulos con su respectiva interfaces utilizada:
+
+\begin{itemize}
+	\item Detectores de tension: Estos módulos se conectan por los puertos GPIO de la placa.
+	\item Sensor de sonido: Se conecta por el puerto analógico digital de la placa.
+	\item Amplificador (Salida al parlante): Utiliza el puerto de conversión digital-analógico.
+	\item ESP8266: utilizar el otro puerto RS232 que posee la EDU-CIAA.
+\end{itemize}
+
+\section{Arquitectura de firmware}
+A este proyecto se le dió el nombre de Soniforo, de la conjunción da las palabras sonido y semáforo.
 
 Se optó por un modelo de capas jerárquico para organizar el código en los distintos niveles de abstracción.
 
 En la figura \ref{fig:arquitecturaFirmwareGeneralSistema} se puede observar como se planteó este trabajo. 
- \begin{figure}[h]
+\begin{figure}[h]
 	\centering
-	\includegraphics[scale=.6]{./Figures/arquitecturaGeneralSistema.pdf}
+	\includegraphics[scale=.5]{./Figures/arquitecturaGeneralSistema.pdf}
 	\caption{Estructura de capas para el \textit{firmware}.}
 	\label{fig:arquitecturaFirmwareGeneralSistema}
 \end{figure}
 
-En cuanto a los niveles de abstraccion, la primera capa consituye el hardware de la plataforma EDU-CIAA. La segunda capa, \textit{Hardware Abstracion Layer} (HAL), permite desacoplar las capas superiores del hardware. Aquí se encuentran los
-drivers del fabricante del microcontrolador, en el bloque funcional LPC Open. La capa Hardware Independent Layer (HIL) incluye los módulos del RTOS (no está asociada a ningún hardware en particular) y sAPI que permite el manejo de los perifericos de la placa con mayor facilidad.
-Sobre esta base se observa una capa orientada a servicio que nos permiten procesar la información del sistema, estas son: 
+En cuanto a los niveles de abstracción, la primera capa constituye el hardware de la plataforma EDU-CIAA. La segunda capa, \textit{Hardware Abstraction Layer} (HAL), permite desacoplar las capas superiores del hardware. Aquí se encuentran los
+drivers del fabricante del microcontrolador, en el bloque funcional LPC Open. La capa Hardware Independent Layer (HIL) incluye los módulos del RTOS (no está asociada a ningún hardware en particular) y sAPI que permite el manejo de los periféricos de la placa con mayor facilidad.
+Sobre esta base se observa una capa orientada a servicio que procesar la información del sistema, estas son: 
 \begin{itemize}
-\item Rtos service: Se encarga de la creación de tareas, temporizadores, semaforos binarios.
-\item Peripheral driver: Se encarga de la configuración de los perifericos, como ser las interrupciones.
-\item Envent framework: esta capa se encarga de la definición y creación de todos los eventos del sistema.
+\item RTOS Service: Se encarga de la creación de tareas, temporizadores, semáforos binarios.
+\item Peripheral Driver: Se encarga de la configuración de los periféricos, como ser las interrupciones.
+\item Envent Framework: esta capa se encarga de la definición y creación de todos los eventos del sistema.
 \end{itemize}
 
-Sobre estas capas se ubican todas las tareas que corren y son propias del sistema, a esta se la llama Rtos task. Finalmente, la última capa contiene la aplicación Soniforo.
+\section{Diseño del firmware}
+Para modelar la solución se utilizo una maquina de estado finito, también conocidas como MEF, esta se puede definir como un modelo computacional que realiza cómputos en forma automática sobre una entrada para producir una salida.
 
+Este modelo está conformado por un alfabeto, un conjunto de estados finito, una función de transición, un estado inicial y un conjunto de estados finales.
 
+De esta manera se observa en la siguiente figura \ref{fig:maquinaEstadoFinitoSoniforo}  la maquina de estado finito perteneciente al sistema, por simplicidad algunos estados fueron eliminados para no dificultar el entendimiento (?).
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=.7]{./Figures/maquinaEstadoFinitoSoniforo.pdf}
+	\caption{Maquina de estado finito del sistema.}
+	\label{fig:maquinaEstadoFinitoSoniforo}
+\end{figure}
+
+De una manera general el sistema puede encontrarse en 3 estados:
+
+\begin{itemize}
+\item Configuracion: Donde se inicializan todos los dispositivos de advertencia. Se denomina dispositivo de advertencia a todos los módulos presentes en el sistema que envía mensajes de manera tal que la persona no vidente puede conocer el estado del semáforo.
+\item Aprendizaje: El sistema usa el prendido y apagado de las luces del semáforo y con ello aprende su funcionamiento tomando los tiempos de las luces.
+\item Corriendo: Una  vez finalizados los dos estados anteriores correctamente, el sistema comienza a funcionar de manera autónoma, siempre y cuando no detecte anomalías en los cambios de las luces del semáforo.
+\end{itemize}
+
+\subsection{Configuración}
+Al energizarse el sistema o luego de un reinicio, el este inicia en el estado INIT donde comienza un temporizador (initConfigurationTimerHandle) que al momento de expirar envía un mensaje para iniciar el sistema, en este momento el sistema pasa a estado CONFIGUING\_INIT este estado consiste en configurar todos los dispositivos de advertencia conectados a la placa principal. 
+En el caso particular para la ESP8266 dicha configuración se la hace a traves de comandos AT, lo que se quiere lograr con la esto es que el modulo Wi-Fi levante un punto de acceso inalámbrico, de forma tal que, cualquier teléfono inteligente pueda conectarse a la red inalámbrica propiamente dicha. Tambien una vez configurado correctamente el punto de acceso, se abre una conexion UDP en el puerto 4096 de manera tal que se pueda enviar mensajes broadcast por dicho puerto. (todo: mejorar esta parte)
+A continuación se enumeran los comando que debe enviar la EDU-CIAA a traves del puerto RS232 hacia la ESP8266 para poder configurar lo nombrado anteriormente de manera correcta:
+
+\begin{enumerate}
+\item{AT}
+\item{AT+RST}
+\item{AT+CWMODE=2}
+\item{AT+CWSAP=``Soniforo\_CIAA'',``'',8,0}
+\item{AT+CWDHCP=0,1}
+\item{AT+CWDHCP=1,1}
+\item{AT+CIPSTART=3,``UDP'',``0'',0,4096,2}
+\item{AT+CIPSEND=3,8,``192.168.4.255'',4096}
+\item{AT+CIPMUX=1}
+\item{AT+CIPDINFO=1}
+\item{AT+CWAUTOCONN=0}
+\end{enumerate}
+
+Para mas detalle de que hace cada comando el lector puede recurrir a la hoja con comandos que provee el fabricante \citep{esp8266command}.
+
+Cada comando posee una respuesta conocida es por esto que por cada uno enviado se espera la respuesta previamente definida, si esto no sucede después de tres intentos se envía la señal SIG\_FAIL\_CONFIG de manera que el sistema vuelve al estado INIT.
+
+\subsection{Aprendizaje}
+Lo que busca el sistema es tiempo que el peatón pueda cruzar la calle y  que tiempo no debe cruzar la calle, esto es los tiempos de las luces tanto roja como verde respectivamente, cuando la luz verde del semaforo vehicular se prende signica que el peaton no puede cruzar la calle ya que se encuentran los vehículos en marcha pero cuando la luz cambia a rojo los vehiculos estan detenidos y el peatón puede cruzar la calle.
+
+Como no sabemos a priori en que momento del ciclo el sistema se va a poner en funcionamiento, ni tampoco conocemos que tiempo puede tardar la configuración de los dispositivos de advertencias, el proceso de aprendizaje se hace a traves del encendido u apagado de las luces roja y verde.
+
+Una vez que los dispositivos de advertencia están configurados de manera correcta el sistema pasa al estado LEARNING\_INIT e inmendiatamente se envia al sistema al estado WAITING\_GREEN\_LIGHT  de manera tal que cuando se detecte una luz verde tome el tiempo de inicio, envia el mensjae de poner al sistema en estado WAITING\_RED\_LIGHT cuando llega la luz roja se detiene el tiempo de la luz verde e inicializa el tiempo para la luz roja mientras espera nueva mente la luz ver, es por esto que se envia una mensaje para pasar al sistema al estado WAITING\_AGAIN\_GREEN\_LIGHT. 
+
+Graficamente podemos ejemplificar la secuencia con un ejemplo.
+
+Se puede observar en la figura  \ref{fig:digramaGraficoCambioSemaforo} para el caso donde la secuencia de las luces son rojo, rojo-amarillo, verde, amarillo, rojo.
+Tomando como base que el sistema termino de configurarse correctamente cuando el semáforo estaba en luz roja.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=.7]{./Figures/digramaGraficoCambioSemaforo.pdf}
+	\caption{Maquina de estado finito del sistema.}
+	\label{fig:digramaGraficoCambioSemaforo}
+\end{figure}
+
+Si por alguna razon se detecta alguna anomalia, como ser un semaforo fuera de servicio el sistema regresa al estado LEARNING INIT. Esto se logra atravez de un temporizador que debe actualizarce cada 65 segundos, si esto no acurre se ejecuta la accion definida anteriormente.
+
+\subsection{Corriendo}
+Una vez finalizado correctamente el aprendizaje de los tiempos, el sistema calcula el tiempo limite para indicar a la persona que puede cruzar la calle tranquilamente, esto se hace a traves de la sigueinte formula \ref{eq:calculoTiempoAmarillo}
+
+\begin{equation}
+\label{eq:calculoTiempoAmarillo}
+yellowLightTimerHandle = tiempoLuzRojo * 0.35
+\end{equation}
+
+De igual manera se hace el calculo para el temporizador de luz roja  formula \ref{eq:calculoTiempoRojo}
+
+\begin{equation}
+\label{eq:calculoTiempoRojo}
+redLightTimerHandle = tiempoLuzRojo * 0.35
+\end{equation}
+
+Estos porcentajes fueron calculados de manera empirica. (decir algo mas) 
+Estos temporizadores son gestionado por el FreeRTOS de manera tal que cuando expiren llamen a funciones predefinidas en el momento de la creacion de estos.
+
+El sistema posee tres temporizadores los cuales son iniciados cuando se detecta una luz encendida.
+
+\begin{itemize}
+\item redLightTimerHandle: tiempo de la luz roja encendida.
+\item yellowLightTimerHandle: se mide en base a la luz roja como se mensiono anteriormente.
+\item greenLightTimerHandle: tiempo de la luz verde.
+\end{itemize}
