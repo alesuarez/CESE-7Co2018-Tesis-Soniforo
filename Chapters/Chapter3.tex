@@ -63,6 +63,41 @@ De esta manera se lista los módulos con su respectiva interfaces utilizada:
 	\item ESP8266: utilizar el otro puerto RS232 que posee la EDU-CIAA.
 \end{itemize}
 
+\subsection{Control de volumen}
+Un ADC convertidor de señal analógica a digital es un dispositivo electrónico capaz de convertir una señal analógica, ya sea de tensión o corriente, en una señal digital mediante un cuantificador y codificándose en muchos casos en un código binario en particular. Donde un código es la representación unívoca de los elementos, en este caso, cada valor numérico binario hace corresponder a un solo valor de tensión o corriente.
+
+Un conversor de señal digital a analógica o DAC realiza el proceso inverso, es decir, converte señales digitales con datos binarios en señales de corriente o de tensión analógica.
+
+El LPC4737 persente en la EDU-CIAA posee un DAC de 10 bits y dos ADC ambos con una tasa de muestreo maxima de 400 kmuestras por segundo.
+
+La toma de señal se hace a traves de un modulo de sonido por el puerto ADC y la salida de la señal sonora por el puerto DAC. En la siguiente figura \ref{fig:controlVolumen} podemos observar  como es el conexionado a la EDU-CIAA.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=.3]{./Figures/controlVolumen.png}
+	\caption{Conexionado de los modulos. A la derecha las entradas y salidas analogicas de la EDU-CIAA y a la izquierda los pines de conexion para la entrada del modulo de microfono (arriba) y la salida hacia el modulo de amplificacion de sonido (abajo)}
+	\label{fig:controlVolumen}
+\end{figure}
+
+Segun el nivel de  intensidad del ruido ambiente presente se definio tres tipos de niveles de salida de acuerdo a la entrada. Como se tiene un converson analogico digital de 10 bits quiere decir que el maximo valor  que pude tener es de 1023 con esto se definene los valores en funcion de la entrada.
+
+\begin{itemize}
+\item Nivel bajo: 0 a 340
+\item Nivel medio: 341 a 680
+\item Nivel alto: 681 a 1023
+\end{itemize}
+
+\subsection{Dispositivos de comunicación}
+
+En la siguiente figura \ref{fig:conexionESP} se observa el conexionado entre la ESP8266 con la EDU-CIA. La programacion del modulo se hace a traves de comandos AT. Estos tambien conocidos como comandos Hayes es un lenguaje desarrollado por la compañía Hayes Communications que prácticamente se convirtió en estándar abierto de comandos para configurar y parametrizar módems. El envio de los comandos se hacer a traves de la interface RS232 presente en la EDU-CIAA
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=.5]{./Figures/conexionESP.png}
+	\caption{Estructura de capas para el \textit{firmware}.}
+	\label{fig:conexionESP}
+\end{figure}
+
 \section{Firmware}
 \subsection{Arquitectura}
 A este proyecto se le dió el nombre de Soniforo, de la conjunción da las palabras sonido y semáforo.
@@ -105,13 +140,13 @@ De esta manera se observa en la siguiente figura \ref{fig:maquinaEstadoFinitoSon
 De una manera general el sistema puede encontrarse en 3 estados:
 
 \begin{itemize}
-\item Configuracion: Donde se inicializan todos los dispositivos de advertencia. Se denomina dispositivo de advertencia a todos los módulos presentes en el sistema que envía mensajes de manera tal que la persona no vidente puede conocer el estado del semáforo.
+\item Configuracion: Donde se inicializan todos los modulos para la comunicacion con dispositivos externos. 
 \item Aprendizaje: El sistema usa el prendido y apagado de las luces del semáforo y con ello aprende su funcionamiento tomando los tiempos de las luces.
-\item Corriendo: Una  vez finalizados los dos estados anteriores correctamente, el sistema comienza a funcionar de manera autónoma, siempre y cuando no detecte anomalías en los cambios de las luces del semáforo.
+\item Corriendo: El sistema funcionando de manera autónoma, siempre y cuando no detecte anomalías en los cambios de las luces del semáforo.
 \end{itemize}
 
 \subsubsection{Configuración}
-Al energizarse el sistema o luego de un reinicio, el este inicia en el estado INIT donde comienza un temporizador (initConfigurationTimerHandle) que al momento de expirar envía un mensaje para iniciar el sistema, en este momento el sistema pasa a estado CONFIGUING\_INIT este estado consiste en configurar todos los dispositivos de advertencia conectados a la placa principal. 
+Al energizarse el sistema o luego de un reinicio, el este inicia en el estado INIT donde comienza un temporizador (initConfigurationTimerHandle) que al momento de expirar envía un mensaje para iniciar el sistema, en este momento el sistema pasa a estado CONFIGUING\_INIT este estado consiste en configurar todos los dispositivos de comunicacion externos conectados a la placa principal. 
 En el caso particular para la ESP8266 dicha configuración se la hace a traves de comandos AT, lo que se quiere lograr con la esto es que el modulo Wi-Fi levante un punto de acceso inalámbrico, de forma tal que, cualquier teléfono inteligente pueda conectarse a la red inalámbrica propiamente dicha. Tambien una vez configurado correctamente el punto de acceso, se abre una conexion UDP en el puerto 4096 de manera tal que se pueda enviar mensajes broadcast por dicho puerto. (todo: mejorar esta parte)
 A continuación se enumeran los comando que debe enviar la EDU-CIAA a traves del puerto RS232 hacia la ESP8266 para poder configurar lo nombrado anteriormente de manera correcta:
 
@@ -134,7 +169,11 @@ Para mas detalle de que hace cada comando el lector puede recurrir a la hoja con
 Cada comando posee una respuesta conocida es por esto que por cada uno enviado se espera la respuesta previamente definida, si esto no sucede después de tres intentos se envía la señal SIG\_FAIL\_CONFIG de manera que el sistema vuelve al estado INIT.
 
 \subsubsection{Aprendizaje}
-Lo que busca el sistema es tiempo que el peatón pueda cruzar la calle y  que tiempo no debe cruzar la calle, esto es los tiempos de las luces tanto roja como verde respectivamente, cuando la luz verde del semaforo vehicular se prende signica que el peaton no puede cruzar la calle ya que se encuentran los vehículos en marcha pero cuando la luz cambia a rojo los vehiculos estan detenidos y el peatón puede cruzar la calle.
+La solucion abstracta a la problemática radica en cuando un peatón puede o no cruzar la calle.
+
+En argentina no existe un protocolo unico de cambios de luces, por esto para ser indendiente solo se quiere medir el tiempo cuando los autos pasan o esperan por el cambio de luz.
+
+Lo que busca el sistema es tiempo que el peatón pueda cruzar la calle cuando se dispara la luz roja y que tiempo no debe cruzarla,  esto es los tiempos de las luces tanto roja como verde respectivamente, cuando la luz verde del semaforo vehicular se prende signica que el peaton no puede cruzar la calle ya que se encuentran los vehículos en marcha pero cuando la luz cambia a rojo los vehiculos estan detenidos y el peatón puede cruzar la calle.
 
 Como no sabemos a priori en que momento del ciclo el sistema se va a poner en funcionamiento, ni tampoco conocemos que tiempo puede tardar la configuración de los dispositivos de advertencias, el proceso de aprendizaje se hace a traves del encendido u apagado de las luces roja y verde.
 
@@ -152,10 +191,12 @@ Tomando como base que el sistema termino de configurarse correctamente cuando el
 	\label{fig:digramaGraficoCambioSemaforo}
 \end{figure}
 
-Si por alguna razon se detecta alguna anomalia, como ser un semaforo fuera de servicio el sistema regresa al estado LEARNING INIT. Esto se logra atravez de un temporizador que debe actualizarce cada 65 segundos, si esto no acurre se ejecuta la accion definida anteriormente.
+Si por alguna razón se detecta alguna anomalia, como ser un semaforo fuera de servicio el sistema regresa al estado LEARNING INIT. Esto se logra atravez de un temporizador que debe actualizarce cada 65 segundos, si esto no acurre se ejecuta la accion definida anteriormente.
 
 \subsubsection{Corriendo}
-Una vez finalizado correctamente el aprendizaje de los tiempos, el sistema calcula el tiempo limite para indicar a la persona que puede cruzar la calle tranquilamente, esto se hace a traves de la sigueinte formula \ref{eq:calculoTiempoAmarillo}
+Una vez finalizado correctamente el aprendizaje de los tiempos, el sistema calcula el tiempo limite para indicar a la persona que puede cruzar la calle tranquilamente, esto se hace a traves de la siguiente formula \ref{eq:calculoTiempoAmarillo}.
+
+esto se implemento de esta forma porque 
 
 \begin{equation}
 \label{eq:calculoTiempoAmarillo}
@@ -183,16 +224,26 @@ El sistema posee tres temporizadores los cuales son iniciados cuando se detecta 
 Una vez configurados los temporizadores, se espera una interrupción de la luz roja para desbloquear la tarea de enviar el estado CROSS a la ESP8266 y ademas empieza a correr el temporizador de la luz roja, cuando este expira se bloquea la tarea de enviar el estado de CROSS y se desbloquea la tarea de enviar el estado CAUTION y se incializa el temporizador de la luz amarilla, cabe recordar como se mensiono que los mensajes broadcast UDP  a traves del puerto 4096. Una vez que vence este temporizador se bloque la tarea de enviar el estado CROSS y se espera nuevamente por la señal de la luz roja encendida.
 
 \section{Principio de funcionamiento}
-El firmware fue diseñado en base a distintos patrones vistos a lo largo de la carrera, principalmente el sistema se basa en el diseño Observar y reaccionar, este patron nos permite reaccionar a distintos eventos y reaccionar de una manera predefinida en conjunto con este patron el sistema implementa Lazos de eventos. Donde las reacciones produce mensajes y segun el estado en el cual este el sistema dispara alguna accion. Donde en nuestro caso particular estas reacciones generan transiciones de estados.
+El firmware fue diseñado en base a distintos patrones de software vistos a lo largo de la carrera, principalmente el sistema se basa en el diseño Observar y reaccionar, este patron nos permite reaccionar a distintos eventos y reaccionar de una manera predefinida en conjunto con este patron el sistema implementa Lazos de eventos. Donde las reacciones produce mensajes y segun el estado en el cual este el sistema dispara alguna accion. Donde en nuestro caso particular estas reacciones generan transiciones de estados.
+
 En la figura \ref{fig:generalWorkFlow} se puede observar el flujo de trabajo del sistema, donde los eventos que produce el semaforo se envian a una cola que segun el tipo de evento y el estado del sistema reacciona de una manera definida.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=.6]{./Figures/generalWorkFlow.pdf}
+	\caption{Diagrama general de funcionamiento.}
+	\label{fig:generalWorkFlow}
+\end{figure}
+
 Es por eso que se define un tipo de dato especial para enviar el evento hacia una cola.
 
 \lstset{language=C, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}
-typedef struct  {
-	led_name_t Led;
-	led_status_t Status;
-} message_t;
+struct event_t {
+	module_t * receptor;
+	int signal;
+	led_name_t ledName;
+};
 \end{lstlisting}
 
 Los tipos de estados de las luces pueden ser:
@@ -202,15 +253,47 @@ Los tipos de estados de las luces pueden ser:
 \item Luz Apagada
 \end{itemize}
 
-El flujo por ejemplo si se prendiera la luz roja seria:
+(No se si poner este ejemplo)
+Podemo ejemplicar este flujo con un ejemplo, en el caso en el cual prenden la luz roja seria:
 \begin{enumerate}
-\item
-\item
-\item
+\item Se produce una interrupción de la luz roja.
+\item Esta interrupcion es manejada por su funcion.
+\item Se envia un evento a la cola eventQueue
+\item La tarea encargada de recibir los eventos, lee el mensaje y ejecuta el manejador correspondiente.
+\item Se ejecuta la accion
 \end{enumerate}
+
+\section{Aplicacion android}
+Para poder recibir los estados del semaforo correctamente se diseño una aplicacion muy simple para la plataforma movil android, esta corre desdeAndroid 4.0.0 (Ice Cream Sandwich) \citep{androidVersion}, dicha aplicación es capaz de vibrar según el tipo de comando que reciba desde el prototipo. En la siguiente tabla \ref{tab:vibraciones} se muestra la relación entre los estados enviados y el tipo de vibración que produce.
+
+\begin{table}[h]
+\centering
+\caption[caption corto]{Relación entre el estado del semáforo y las vibraciones emitidas}
+\begin{tabular}{l c}
+\toprule
+\textbf{Estado enviado} & \textbf{Tipo de vibraciones}\\
+\midrule
+Esperar & Sin vibraciones\\
+Cruzar &  Vibraciones 2 segundo con 2 segundo de espera\\
+Precaucion & Vibraciones de 1 segundo con 1 segundo de espera\\
+\bottomrule
+\hline
+\end{tabular}
+\label{tab:vibraciones}
+\end{table}
+
+La aplicación móvil tiene una interface muy simple y esta orientada a la correcta visualización de los estados del semáforo. Como se puede observar en la figura \ref{fig:androidApplication} posee dos botones, uno para conectar al servidor broadcast en el puerto 4096 y otro para detener la conexión, edemas posee  una pantalla donde se pueden visualizar los mensajes enviados desde Soniforo.
+
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=.6]{./Figures/generalWorkFlow.pdf}
-	\caption{Diagrama general de funcionamiento.}
-	\label{fig:generalWorkFlow}
+	\includegraphics[scale=.5]{./Figures/androidApplication.pdf}
+	\caption{Interface grafica de la aplicacion android desarrollada}
+	\label{fig:androidApplication}
 \end{figure}
+
+\section{Poncho}
+Para poder conectar los modulos externos principal EDU-CIA se utilizó la aplicación Eeschema del KiCAD 5. El diseño se llevó a cabo conectando los puertos de expansión -o interfaz- de la EDU-CIAA-NXP a los diferentes modulos externos, tambien adicionalmente se agrego puertos para conectar una fuente externar de manera tal que la placa princial  no tenga exigencia de corrientes. 
+(Habria que poner que se hizo un calculo de las corriente que sacan lo perifericos)
+Se puede observar en la siguiente figura el equema general de conexionado
+
+\section{Gabinete}

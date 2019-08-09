@@ -164,6 +164,24 @@
   \endverb
 \endentry
 
+\entry{androidVersion}{misc}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Wikipedia}{W.}%
+     {}{}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{W1}
+  \strng{fullhash}{W1}
+  \field{sortinit}{W}
+  \field{note}{Disponible: 2019-08-08}
+  \field{title}{Android Ice Cream Sandwich}
+  \verb{url}
+  \verb https://es.wikipedia.org/wiki/Android_Ice_Cream_Sandwich
+  \endverb
+\endentry
+
 \entry{semaforo}{misc}{}
   \name{author}{1}{}{%
     {{}%

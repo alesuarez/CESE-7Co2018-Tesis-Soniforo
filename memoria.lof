@@ -11,7 +11,12 @@
 \contentsline {figure}{\numberline {2.6}{\ignorespaces Circuito amplificador basado en el amplificador operacional LM386.\relax }}{8}{figure.caption.49}
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Diagrama general del hardware.\relax }}{9}{figure.caption.53}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Estructura de capas para el \textit {firmware}.\relax }}{10}{figure.caption.56}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Maquina de estado finito del sistema.\relax }}{11}{figure.caption.58}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Maquina de estado finito del sistema.\relax }}{13}{figure.caption.72}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Diagrama general de funcionamiento.\relax }}{15}{figure.caption.85}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Conexionado de los modulos. A la derecha las entradas y salidas analogicas de la EDU-CIAA y a la izquierda los pines de conexion para la entrada del modulo de microfono (arriba) y la salida hacia el modulo de amplificacion de sonido (abajo)\relax }}{10}{figure.caption.55}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Estructura de capas para el \textit {firmware}.\relax }}{11}{figure.caption.57}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Estructura de capas para el \textit {firmware}.\relax }}{12}{figure.caption.60}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Maquina de estado finito del sistema.\relax }}{13}{figure.caption.62}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Maquina de estado finito del sistema.\relax }}{15}{figure.caption.76}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Diagrama general de funcionamiento.\relax }}{16}{figure.caption.81}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Interface grafica de la aplicacion android desarrollada\relax }}{18}{figure.caption.95}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
